@@ -18,15 +18,24 @@ data1["SMA_200"] = data1['Close'].rolling(window=200).mean()
 data2["SMA_50"] = data2['Close'].rolling(window=50).mean()
 data2["SMA_200"] = data2['Close'].rolling(window=200).mean()
 
-# Plotting the closing prices and moving averages
-plt.figure(figsize=(16, 8))
-plt.plot(data1['Close'], label=f'{ticker1} Close Price', alpha = 0.5)
-plt.plot(data1["SMA_50"], label=f'{ticker1} 50-Day SMA', color='orange')
-plt.plot(data1["SMA_200"], label=f'{ticker1} 200-Day SMA', color='red')
-plt.plot(data2['Close'], label=f'{ticker2} Close Price', alpha = 0.5)
-plt.plot(data2["SMA_50"], label=f'{ticker2} 50-Day SMA', color='blue')
-plt.plot(data2["SMA_200"], label=f'{ticker2} 200-Day SMA', color='darkblue')
+#Create 2 separate plots(subplots) for each stock
+fig, (ax1, ax2) = plt.subplots(nrows = 2, ncols = 1, figsize=(16, 12), sharex=True)
 
-plt.title(f'{ticker1} and {ticker2} Simple Moving Average Crossover')
-plt.legend()
+# Plotting the closing prices and moving averages
+# Plot Ticker 1 on the top chart (ax1)
+ax1.plot(data1['Close'], label=f'{ticker1} Price', alpha=0.5, color='gray')
+ax1.plot(data1["SMA_50"], label='SMA 50', color='orange')
+ax1.plot(data1["SMA_200"], label='SMA 200', color='red')
+ax1.set_title(f'{ticker1} Analysis')
+ax1.legend()
+
+# Plot Ticker 2 on the bottom chart (ax2)
+ax2.plot(data2['Close'], label=f'{ticker2} Price', alpha=0.5, color='gray')
+ax2.plot(data2["SMA_50"], label='SMA 50', color='cyan')
+ax2.plot(data2["SMA_200"], label='SMA 200', color='blue')
+ax2.set_title(f'{ticker2} Analysis')
+ax2.legend()
+
+# Adjusts spacing so titles don't overlap
+plt.tight_layout() 
 plt.show()
