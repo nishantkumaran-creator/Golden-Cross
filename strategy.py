@@ -35,7 +35,7 @@ class GoldenCrossBacktester:
         """Plots the Price and the Strategy Performance"""
         if 'Cumulative_Strategy' not in self.df.columns:
             print("Run backtest first!")
-            return
+            return None
 
         # Define Title Logic
         if self.short_window == 50 and self.long_window == 200:
@@ -43,7 +43,17 @@ class GoldenCrossBacktester:
         else:
             strategy_name = f"SMA {self.short_window}/{self.long_window}"
 
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+        # 1. Market Drawdown
+        market_cum = self.df['Cumulative_Market']
+        market_peak = market_cum.cummax()
+        market_dd = (market_cum / market_peak) - 1
+
+        # 2. Strategy Drawdown
+        strat_cum = self.df['Cumulative_Strategy']
+        strat_peak = strat_cum.cummax()
+        strat_dd = (strat_cum / strat_peak) - 1    
+
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
 
         # Plot 1: Price
         ax1.plot(self.df['Close'], label=f'{self.ticker} Price', alpha=0.5, color='gray')
@@ -60,6 +70,13 @@ class GoldenCrossBacktester:
         ax2.legend()
         ax2.grid(True, alpha=0.3)
 
+        # Plot 3: The "Underwater" Plot (Damage Control)
+        ax3.fill_between(market_dd.index, market_dd, 0, color='red', alpha=0.3, label='Market Drawdown')
+        ax3.plot(strat_dd, color='green', linewidth=1.5, label='Strategy Drawdown')
+        ax3.set_title('Risk Analysis: Underwater Plot (Drawdown)')
+        ax3.set_ylabel('% Below Peak')
+        ax3.legend(loc="lower left")
+        ax3.grid(True, alpha=0.3)
         plt.tight_layout()
         return fig
 
