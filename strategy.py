@@ -61,7 +61,7 @@ class GoldenCrossBacktester:
         ax2.grid(True, alpha=0.3)
 
         plt.tight_layout()
-        plt.show()
+        return fig
 
     def calculate_risk_metrics(self):
         """Calculates Sharpe Ratio and Max Drawdown"""
@@ -130,9 +130,7 @@ class GoldenCrossBacktester:
                 
                 self.results.loc[short_w, long_w] = total_ret
 
-        plt.figure(figsize=(10, 8))
+        fig = plt.figure(figsize=(10, 8))
         sns.heatmap(self.results.astype(float), annot=True, fmt=".2f", cmap="RdYlGn", center=0)
         plt.title(f"Optimization Heatmap: {self.ticker}")
-        plt.xlabel("Long Window")
-        plt.ylabel("Short Window")
-        plt.show()
+        return fig

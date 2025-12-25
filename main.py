@@ -1,5 +1,5 @@
 from stock_data import StockData
-from strategy import GoldenCrossBacktester
+from strategy import GoldenCrossBacktester 
 
 def main():
     while True:
