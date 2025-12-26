@@ -105,21 +105,6 @@ class SMABacktester:
 
         return strat_sharpe, strat_dd, market_sharpe, market_dd
 
-    def print_summary(self):
-        if 'Cumulative_Strategy' not in self.df.columns:
-            print("Error: Please run run_backtest() before printing summary.")
-            return
-        latest_strategy = self.df['Cumulative_Strategy'].iloc[-1]
-        latest_market = self.df['Cumulative_Market'].iloc[-1]
-        strat_sharpe, strat_dd, market_sharpe, market_dd = self.calculate_risk_metrics()
-
-        print(f"{'Metric':<15} {'Strategy':<15} {'Buy & Hold':<15}")
-        print("-" * 45)
-        print(f"{'Total Return':<15} {(latest_strategy - 1)*100:.2f}%{'':<8} {(latest_market - 1)*100:.2f}%")
-        print(f"{'Sharpe Ratio':<15} {strat_sharpe:.2f}{'':<11} {market_sharpe:.2f}")
-        print(f"{'Max Drawdown':<15} {strat_dd*100:.2f}%{'':<8} {market_dd*100:.2f}%")
-        print("---------------------------------------------\n")
-
     def run_optimization(self):
         """Runs the loop to find best parameters"""
         print(f"\nOptimizing parameters for {self.ticker}...")
@@ -128,26 +113,33 @@ class SMABacktester:
         short_range = range(10, 60, 5) 
         long_range = range(100, 220, 10)
         
+        # Create a dataframe to store results
         self.results = pd.DataFrame(index=short_range, columns=long_range)
         
         for short_w in short_range:
             for long_w in long_range:
+                # 1. Handle Invalid Combinations (Short > Long)
                 if short_w >= long_w:
-                    self.results.loc[short_w, long_w] = total_ret
+                    self.results.loc[short_w, long_w] = np.nan # Fix: Use np.nan instead of total_ret
                     continue
                 
-                # Simplified loop logic for speed
+                # 2. Simplified Backtest Logic
                 sma_short = pd.Series(prices).rolling(window=short_w).mean()
                 sma_long = pd.Series(prices).rolling(window=long_w).mean()
                 signal = np.where(sma_short > sma_long, 1, 0)
                 
                 market_ret = pd.Series(prices).pct_change()
                 strategy_ret = pd.Series(signal).shift(1) * market_ret
+                
+                # 3. Calculate Total Return
                 total_ret = (1 + strategy_ret).prod() - 1
                 
                 self.results.loc[short_w, long_w] = total_ret
 
-        fig = plt.figure(figsize=(10, 8))
-        sns.heatmap(self.results.astype(float), annot=True, fmt=".2f", cmap="RdYlGn", center=0)
-        plt.title(f"Optimization Heatmap: {self.ticker}")
+        # 4. Create the Heatmap Figure
+        # Explicitly create figure and axes to prevent "Empty Chart" errors in Streamlit
+        fig, ax = plt.subplots(figsize=(10, 8))
+        sns.heatmap(self.results.astype(float), annot=True, fmt=".2f", cmap="RdYlGn", center=0, ax=ax)
+        ax.set_title(f"Optimization Heatmap: {self.ticker}")
+        
         return fig
