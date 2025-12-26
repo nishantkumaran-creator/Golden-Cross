@@ -9,7 +9,7 @@ Vectorized Engine: Uses pandas and numpy vectorization for high-speed backtestin
 
 Risk Management Visualization: Includes "Underwater Plots" to visualize drawdown depth and duration, proving the strategy's ability to preserve capital during market crashes.
 
-Parameter Optimization: Generates computation-intensive heatmaps to identify the most robust Moving Average combinations (e.g., SMA 85/100).
+Parameter Optimization: Generates computation-intensive heatmaps to identify the most robust Moving Average combinations (e.g., SMA 55/110).
 
 Interactive Dashboard: Built with Streamlit for real-time interaction—change tickers and windows instantly without restarting the script.
 
@@ -18,14 +18,14 @@ Dockerized Deployment: Fully containerized environment ensuring the app runs ide
 The Strategy & Damage Control
 The core strategy implemented is a Moving Average Crossover. While the standard "Golden Cross" (50/200 SMA) is popular, this engine allows for granular optimization.
 
-### Finding: The 85/100 Edge
-Through optimization, the SMA 85 / SMA 100 pair demonstrated superior risk-adjusted returns during the 2020-2023 volatility.
+### Finding: The 55/110 Edge
+Through optimization, the SMA 55 / SMA 110 pair demonstrated superior risk-adjusted returns during the 2020-2023 volatility.
 
 Why it worked: It was fast enough to exit positions before major drawdowns (COVID-19, 2022 Inflation) but slow enough to filter out daily noise.
 
 Visual Proof: The "Underwater Plot" in the app demonstrates that while the market fell -25% in 2022, the strategy remained flat (cash), effectively neutralizing volatility drag.
 
-> Note: The success of specific parameters (like 85/100) is a result of in-sample optimization. For production trading, Walk-Forward Optimization would be required to prevent overfitting.
+> Note: The success of specific parameters (like 55/110) is a result of in-sample optimization. For production trading, Walk-Forward Optimization would be required to prevent overfitting.
 
 ## Technical Architecture
 The project follows a modular Object-Oriented Programming (OOP) structure to ensure maintainability and scalability.
